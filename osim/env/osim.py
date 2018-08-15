@@ -351,6 +351,7 @@ class OsimEnv(gym.Env):
             obs = self.get_observation()
         else:
             obs = self.get_state_desc()
+            obs = (obs - np.minimum(obs)) / (np.maximum(obs) - np.minimum(obs))
 
         return [ obs, self.reward(), self.is_done() or (self.osim_model.istep >= self.spec.timestep_limit), {} ]
 

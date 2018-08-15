@@ -342,7 +342,7 @@ class OsimEnv(gym.Env):
             return self.get_state_desc()
         return self.get_observation()
 
-    def step(self, action, project = True):
+    def step(self, action, project = False):
         self.prev_state_desc = self.get_state_desc()
         self.osim_model.actuate(action)
         self.osim_model.integrate()
@@ -351,7 +351,7 @@ class OsimEnv(gym.Env):
             obs = self.get_observation()
         else:
             obs = self.get_state_desc()
-            obs = (obs - np.minimum(obs)) / (np.maximum(obs) - np.minimum(obs))
+            obs = (obs - np.min(obs)) / (np.max(obs) - np.min(obs))
 
         return [ obs, self.reward(), self.is_done() or (self.osim_model.istep >= self.spec.timestep_limit), {} ]
 

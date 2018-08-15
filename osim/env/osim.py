@@ -7,7 +7,7 @@ import opensim
 import random
 
 ## OpenSim interface
-# The amin purpose of this class is to provide wrap all 
+# The amin purpose of this class is to provide wrap all
 # the necessery elements of OpenSim in one place
 # The actual RL environment then only needs to:
 # - open a model
@@ -28,7 +28,7 @@ class OsimModel(object):
     brain = None
     verbose = False
     istep = 0
-    
+
     state_desc_istep = None
     prev_state_desc = None
     state_desc = None
@@ -68,7 +68,7 @@ class OsimModel(object):
             self.curforces.append(1.0)
 
         self.noutput = self.muscleSet.getSize()
-            
+
         self.model.addController(self.brain)
         self.model.initSystem()
 
@@ -95,7 +95,7 @@ class OsimModel(object):
 
         # TODO: Check if actions within [0,1]
         self.last_action = action
-            
+
         brain = opensim.PrescribedController.safeDownCast(self.model.getControllerSet().get(0))
         functionSet = brain.get_ControlFunctions()
 
@@ -148,7 +148,7 @@ class OsimModel(object):
             res["body_pos"][name] = [body.getTransformInGround(self.state).p()[i] for i in range(3)]
             res["body_vel"][name] = [body.getVelocityInGround(self.state).get(1).get(i) for i in range(3)]
             res["body_acc"][name] = [body.getAccelerationInGround(self.state).get(1).get(i) for i in range(3)]
-            
+
             res["body_pos_rot"][name] = [body.getTransformInGround(self.state).R().convertRotationToBodyFixedXYZ().get(i) for i in range(3)]
             res["body_vel_rot"][name] = [body.getVelocityInGround(self.state).get(0).get(i) for i in range(3)]
             res["body_acc_rot"][name] = [body.getAccelerationInGround(self.state).get(0).get(i) for i in range(3)]
@@ -171,8 +171,8 @@ class OsimModel(object):
             res["muscles"][name]["fiber_length"] = muscle.getFiberLength(self.state)
             res["muscles"][name]["fiber_velocity"] = muscle.getFiberVelocity(self.state)
             res["muscles"][name]["fiber_force"] = muscle.getFiberForce(self.state)
-            # We can get more properties from here http://myosin.sourceforge.net/2125/classOpenSim_1_1Muscle.html 
-        
+            # We can get more properties from here http://myosin.sourceforge.net/2125/classOpenSim_1_1Muscle.html
+
         ## Markers
         res["markers"] = {}
         for i in range(self.markerSet.getSize()):
@@ -263,7 +263,7 @@ class Spec(object):
         self.timestep_limit = 1000
 
 ## OpenAI interface
-# The amin purpose of this class is to provide wrap all 
+# The amin purpose of this class is to provide wrap all
 # the functions of OpenAI gym. It is still an abstract
 # class but closer to OpenSim. The actual classes of
 # environments inherit from this one and:
@@ -283,7 +283,7 @@ class OsimEnv(gym.Env):
 
     prev_state_desc = None
 
-    model_path = None # os.path.join(os.path.dirname(__file__), '../models/MODEL_NAME.osim')    
+    model_path = None # os.path.join(os.path.dirname(__file__), '../models/MODEL_NAME.osim')
 
     metadata = {
         'render.modes': ['human'],
@@ -304,7 +304,7 @@ class OsimEnv(gym.Env):
     def load_model(self, model_path = None):
         if model_path:
             self.model_path = model_path
-            
+
         self.osim_model = OsimModel(self.model_path, self.visualize, integrator_accuracy = self.integrator_accuracy)
 
         # Create specs, action and observation spaces mocks for compatibility with OpenAI gym
@@ -314,7 +314,7 @@ class OsimEnv(gym.Env):
         self.action_space = ( [0.0] * self.osim_model.get_action_space_size(), [1.0] * self.osim_model.get_action_space_size() )
 #        self.observation_space = ( [-math.pi*100] * self.get_observation_space_size(), [math.pi*100] * self.get_observation_space_s
         self.observation_space = ( [0] * self.get_observation_space_size(), [0] * self.get_observation_space_size() )
-        
+
         self.action_space = convert_to_gym(self.action_space)
         self.observation_space = convert_to_gym(self.observation_space)
 
@@ -337,13 +337,13 @@ class OsimEnv(gym.Env):
 
     def reset(self, project = True):
         self.osim_model.reset()
-        
+
         if not project:
             return self.get_state_desc()
         return self.get_observation()
 
     def step(self, action, project = True):
-        self.prev_state_desc = self.get_state_desc()        
+        self.prev_state_desc = self.get_state_desc()
         self.osim_model.actuate(action)
         self.osim_model.integrate()
 
@@ -351,14 +351,14 @@ class OsimEnv(gym.Env):
             obs = self.get_observation()
         else:
             obs = self.get_state_desc()
-            
+
         return [ obs, self.reward(), self.is_done() or (self.osim_model.istep >= self.spec.timestep_limit), {} ]
 
     def render(self, mode='human', close=False):
         return
 
 class L2RunEnv(OsimEnv):
-    model_path = os.path.join(os.path.dirname(__file__), '../models/gait9dof18musc.osim')    
+    model_path = os.path.join(os.path.dirname(__file__), '../models/gait9dof18musc.osim')
     time_limit = 1000
 
     def is_done(self):
@@ -409,9 +409,9 @@ class ProstheticsEnv(OsimEnv):
 
     def __init__(self, visualize = True, integrator_accuracy = 5e-5):
         self.model_paths = {}
-        self.model_paths["3D_pros"] = os.path.join(os.path.dirname(__file__), '../models/gait14dof22musc_pros_20180507.osim')    
-        self.model_paths["3D"] = os.path.join(os.path.dirname(__file__), '../models/gait14dof22musc_20170320.osim')    
-        self.model_paths["2D_pros"] = os.path.join(os.path.dirname(__file__), '../models/gait14dof22musc_planar_pros_20180507.osim')    
+        self.model_paths["3D_pros"] = os.path.join(os.path.dirname(__file__), '../models/gait14dof22musc_pros_20180507.osim')
+        self.model_paths["3D"] = os.path.join(os.path.dirname(__file__), '../models/gait14dof22musc_20170320.osim')
+        self.model_paths["2D_pros"] = os.path.join(os.path.dirname(__file__), '../models/gait14dof22musc_planar_pros_20180507.osim')
         self.model_paths["2D"] = os.path.join(os.path.dirname(__file__), '../models/gait14dof22musc_planar_20170320.osim')
         self.model_path = self.model_paths[self.get_model_key()]
         super(ProstheticsEnv, self).__init__(visualize = visualize, integrator_accuracy = integrator_accuracy)
@@ -420,7 +420,7 @@ class ProstheticsEnv(OsimEnv):
         if (self.model, self.prosthetic) != (model, prosthetic):
             self.model, self.prosthetic = model, prosthetic
             self.load_model(self.model_paths[self.get_model_key()])
-    
+
     def is_done(self):
         state_desc = self.get_state_desc()
         return state_desc["body_pos"]["pelvis"][1] < 0.6
@@ -484,11 +484,17 @@ class ProstheticsEnv(OsimEnv):
         prev_state_desc = self.get_prev_state_desc()
         if not prev_state_desc:
             return 0
-        return 9.0 - (state_desc["body_vel"]["pelvis"][0] - 3.0)**2
+        reward = 9.0 - (state_desc["body_vel"]["pelvis"][0] - 3.0)**2
+
+        # custom reward shaping
+        if state_desc["body_pos"]["pelvis"][0] < state_desc["body_pos"]["head"][0]:
+            reward -= 0.1
+
+        return reward
 
 
 class Arm2DEnv(OsimEnv):
-    model_path = os.path.join(os.path.dirname(__file__), '../models/arm2dof6musc.osim')    
+    model_path = os.path.join(os.path.dirname(__file__), '../models/arm2dof6musc.osim')
     time_limit = 200
     target_x = 0
     target_y = 0
@@ -526,7 +532,7 @@ class Arm2DEnv(OsimEnv):
     def generate_new_target(self):
         theta = random.uniform(math.pi*9/8, math.pi*12/8)
         radius = random.uniform(0.5, 0.65)
-        self.target_x = math.cos(theta) * radius 
+        self.target_x = math.cos(theta) * radius
         self.target_y = math.sin(theta) * radius
 
         state = self.osim_model.get_state()
@@ -538,7 +544,7 @@ class Arm2DEnv(OsimEnv):
         self.target_joint.getCoordinate(2).setValue(state, self.target_y, False)
         self.target_joint.getCoordinate(2).setLocked(state, True)
         self.osim_model.set_state(state)
-        
+
     def reset(self, random_target = True):
         obs = super(Arm2DEnv, self).reset()
         if random_target:
@@ -563,9 +569,9 @@ class Arm2DEnv(OsimEnv):
 
         self.osim_model.model.addJoint(self.target_joint)
         self.osim_model.model.addBody(blockos)
-        
+
         self.osim_model.model.initSystem()
-    
+
     def reward(self):
         state_desc = self.get_state_desc()
         penalty = (state_desc["markers"]["r_radius_styloid"]["pos"][0] - self.target_x)**2 + (state_desc["markers"]["r_radius_styloid"]["pos"][1] - self.target_y)**2

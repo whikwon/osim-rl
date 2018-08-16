@@ -343,6 +343,7 @@ class OsimEnv(gym.Env):
         return self.get_observation()
 
     def step(self, action, project = True):
+        action = np.clip(action, 0, 1)
         self.prev_state_desc = self.get_state_desc()
         self.osim_model.actuate(action)
         self.osim_model.integrate()
@@ -489,7 +490,7 @@ class ProstheticsEnv(OsimEnv):
 
         # custom reward shaping
         if state_desc["body_pos"]["pelvis"][0] < state_desc["body_pos"]["head"][0]:
-            reward -= 0.1
+            reward -= 0.01
 
         return reward
 

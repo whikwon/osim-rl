@@ -350,7 +350,7 @@ class OsimEnv(gym.Env):
 
         if project:
             obs = self.get_observation()
-            obs = (obs - np.min(obs)) / (np.max(obs) - np.min(obs))
+            obs = (obs - np.mean(obs)) / np.std(obs)
         else:
             obs = self.get_state_desc()
 

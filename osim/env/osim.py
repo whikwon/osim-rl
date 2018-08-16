@@ -341,7 +341,11 @@ class OsimEnv(gym.Env):
 
         if not project:
             return self.get_state_desc()
-        return self.get_observation()
+
+        init_state = self.get_observation()
+        normed_init_state = (init_state - np.mean(init_state)) / np.std(init_state)
+
+        return normed_init_state
 
     def step(self, action, project = True):
         action = np.clip(action, 0, 1)

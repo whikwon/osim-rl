@@ -347,7 +347,7 @@ class OsimEnv(gym.Env):
     def step(self, action, project = True):
 #        action = np.clip(action, 0, 1)
 #        action = np.digitize(action, self.bins, right=True) / 10
-        action = action / 10  # for discretized actions
+        action = [i/10 for i in action]  # for discretized actions
 
         self.prev_state_desc = self.get_state_desc()
         self.osim_model.actuate(action)

@@ -342,10 +342,7 @@ class OsimEnv(gym.Env):
         if not project:
             return self.get_state_desc()
 
-        init_state = self.get_observation()
-        normed_init_state = (init_state - np.mean(init_state)) / np.std(init_state)
-
-        return normed_init_state
+        return self.get_observation()
 
     def step(self, action, project = True):
         action = np.clip(action, 0, 1)
@@ -357,7 +354,6 @@ class OsimEnv(gym.Env):
 
         if project:
             obs = self.get_observation()
-            obs = (obs - np.mean(obs)) / np.std(obs)
         else:
             obs = self.get_state_desc()
 
@@ -497,7 +493,7 @@ class ProstheticsEnv(OsimEnv):
 
         # custom reward shaping
         if state_desc["body_pos"]["pelvis"][0] < state_desc["body_pos"]["head"][0]:
-            reward -= 0.01
+            reward -= 0.1
 
         return reward
 

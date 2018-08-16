@@ -282,7 +282,7 @@ class OsimEnv(gym.Env):
     time_limit = 1e10
 
     prev_state_desc = None
-    self.bins = np.linspace(0, 1, 11)
+    bins = np.linspace(0, 1, 11)
 
     model_path = None # os.path.join(os.path.dirname(__file__), '../models/MODEL_NAME.osim')
 
@@ -345,7 +345,7 @@ class OsimEnv(gym.Env):
 
     def step(self, action, project = True):
         action = np.clip(action, 0, 1)
-        action = np.digitize(action, self.bins, right=True) / 10
+        action = np.digitize(action, self.osim_model.bins, right=True) / 10
 
         self.prev_state_desc = self.get_state_desc()
         self.osim_model.actuate(action)

@@ -297,7 +297,7 @@ class OsimEnv(gym.Env):
     def is_done(self):
         return False
 
-    def __init__(self, visualize = True, integrator_accuracy = 5e-5):
+    def __init__(self, visualize = True, integrator_accuracy = 3e-2):
         self.visualize = visualize
         self.integrator_accuracy = integrator_accuracy
         self.load_model()

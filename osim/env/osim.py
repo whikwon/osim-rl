@@ -254,7 +254,7 @@ class OsimModel(object):
         try:
             self.state = self.manager.integrate(self.stepsize * self.istep)
         except Exception as e:
-            print (e)
+            pass
 
 
 class Spec(object):

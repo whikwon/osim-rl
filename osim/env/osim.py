@@ -492,9 +492,18 @@ class ProstheticsEnv(OsimEnv):
             return 0
         reward = 9.0 - (state_desc["body_vel"]["pelvis"][0] - 3.0)**2
 
+        penalty = 0
         # custom reward shaping
-        if state_desc["body_pos"]["pelvis"][0] < state_desc["body_pos"]["head"][0]:
-            reward -= 0.1
+        for body_part in ['femur_r', 'pros_tibia_r', 'pros_foot_r',
+                          'femur_l', 'tibia_l', 'talus_l', 'calcn_l', 'toes_l',
+                          'torso', 'head']:
+            penalty -= abs(state_desc['body_pos'][body_part][2])
+
+        reward += penalty
+
+#        # penalty according to head and pelvis position
+#        if state_desc["body_pos"]["pelvis"][0] < state_desc["body_pos"]["head"][0]:
+#            reward -= 0.1
 
         return reward
 

@@ -499,8 +499,13 @@ class ProstheticsEnv(OsimEnv):
                           'torso', 'head']:
             penalty -= abs(state_desc['body_pos'][body_part][2])
 
+        if state_desc["body_pos"]["pelvis"][1] < 0.6:
+            penalty -= 20
+
         reward += penalty
 
+        if self.osim_model.istep == self.spec.timestep_limit:
+            reward += 50
 #        # penalty according to head and pelvis position
 #        if state_desc["body_pos"]["pelvis"][0] < state_desc["body_pos"]["head"][0]:
 #            reward -= 0.1

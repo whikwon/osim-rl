@@ -283,6 +283,9 @@ class OsimEnv(gym.Env):
 
     prev_state_desc = None
 #    bins = np.linspace(0, 1, 11)
+    ids_remove = [35, 36, 38, 39, 39, 40, 41, 42, 43, 53, 54, 55, 56, 57, 58,
+                  59, 60, 61, 91, 94, 97, 100, 103, 106, 109, 112, 115, 118,
+                  121, 124, 127, 130, 133, 136, 139, 142, 145]
 
     model_path = None # os.path.join(os.path.dirname(__file__), '../models/MODEL_NAME.osim')
 
@@ -358,7 +361,9 @@ class OsimEnv(gym.Env):
         else:
             obs = self.get_state_desc()
 
-        return [ obs, self.reward(), self.is_done() or (self.osim_model.istep >= self.spec.timestep_limit), {} ]
+        obs = [obs[i] for i in range(len(obs)) if i not in self.ids_remove]
+
+        return [obs, self.reward(), self.is_done() or (self.osim_model.istep >= self.spec.timestep_limit), {} ]
 
     def render(self, mode='human', close=False):
         return
@@ -505,7 +510,7 @@ class ProstheticsEnv(OsimEnv):
         reward += penalty
 
         if self.osim_model.istep == self.spec.timestep_limit:
-            reward += 50
+            reward += 40
 #        # penalty according to head and pelvis position
 #        if state_desc["body_pos"]["pelvis"][0] < state_desc["body_pos"]["head"][0]:
 #            reward -= 0.1

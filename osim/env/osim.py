@@ -342,10 +342,14 @@ class OsimEnv(gym.Env):
     def reset(self, project = True):
         self.osim_model.reset()
 
-        if not project:
-            return self.get_state_desc()
+        if project:
+            obs = self.get_observation()
+        else:
+            obs = self.get_state_desc()
 
-        return self.get_observation()
+        obs = [obs[i] for i in range(len(obs)) if i not in self.ids_remove]
+
+        return obs
 
     def step(self, action, project = True):
 #        action = np.clip(action, 0, 1)

@@ -347,7 +347,7 @@ class OsimEnv(gym.Env):
         else:
             obs = self.get_state_desc()
 
-        obs = [obs[i] for i in range(len(obs)) if i not in self.ids_remove]
+#        obs = [obs[i] for i in range(len(obs)) if i not in self.ids_remove]
 
         return obs
 
@@ -365,7 +365,7 @@ class OsimEnv(gym.Env):
         else:
             obs = self.get_state_desc()
 
-        obs = [obs[i] for i in range(len(obs)) if i not in self.ids_remove]
+#        obs = [obs[i] for i in range(len(obs)) if i not in self.ids_remove]
 
         return [obs, self.reward(), self.is_done() or (self.osim_model.istep >= self.spec.timestep_limit), {} ]
 
@@ -508,13 +508,13 @@ class ProstheticsEnv(OsimEnv):
                           'torso', 'head']:
             penalty -= abs(state_desc['body_pos'][body_part][2])
 
-        if state_desc["body_pos"]["pelvis"][1] < 0.6:
-            penalty -= 20
+#        if state_desc["body_pos"]["pelvis"][1] < 0.6:
+#            penalty -= 20
 
         reward += penalty
 
-        if self.osim_model.istep == self.spec.timestep_limit:
-            reward += 40
+#        if self.osim_model.istep == self.spec.timestep_limit:
+#            reward += 40
 #        # penalty according to head and pelvis position
 #        if state_desc["body_pos"]["pelvis"][0] < state_desc["body_pos"]["head"][0]:
 #            reward -= 0.1

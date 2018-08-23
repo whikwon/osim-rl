@@ -491,7 +491,7 @@ class ProstheticsEnv(OsimEnv):
 
     def get_observation_space_size(self):
         if self.prosthetic == True:
-            return 122
+            return 158
         return 167
 
     def reward(self):

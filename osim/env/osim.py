@@ -294,7 +294,6 @@ class OsimEnv(gym.Env):
     time_limit = 1e10
 
     prev_state_desc = None
-#    bins = np.linspace(0, 1, 11)
     ids_remove = [35, 36, 38, 39, 39, 40, 41, 42, 43, 53, 54, 55, 56, 57, 58,
                   59, 60, 61]
     fiber_velocities = [97, 100, 103, 106, 109, 112, 115, 118, 121, 124, 127,
@@ -518,18 +517,22 @@ class ProstheticsEnv(OsimEnv):
 
         # custom reward shaping
         penalty = 0
-        for body_part in ['femur_r', 'pros_tibia_r', 'pros_foot_r',
-                          'femur_l', 'tibia_l', 'talus_l', 'calcn_l', 'toes_l',
-                          'torso', 'head']:
-            penalty -= abs(state_desc['body_pos'][body_part][2])
+#        for body_part in ['femur_r', 'pros_tibia_r', 'pros_foot_r',
+#                          'femur_l', 'tibia_l', 'talus_l', 'calcn_l', 'toes_l',
+#                          'torso', 'head']:
+#            penalty -= abs(state_desc['body_pos'][body_part][2])
+
+        # reward and penalty according to the pelvis position
+        penalty += abs(state_desc['body_pos']['pelvis'][2])
+        reward += abs(state_desc['body_pos']['pelvis'][0])
 
         if state_desc["body_pos"]["pelvis"][1] < 0.6:
-            penalty -= 30
-
-        reward += penalty
+            penalty += 30
 
         if self.osim_model.istep == self.spec.timestep_limit:
             reward += 50
+
+        reward -= penalty
 
         return reward
 

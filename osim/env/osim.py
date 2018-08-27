@@ -37,7 +37,7 @@ class OsimModel(object):
     maxforces = []
     curforces = []
 
-    def __init__(self, model_path, visualize, integrator_accuracy=3e-2):
+    def __init__(self, model_path, visualize, integrator_accuracy = 5e-5):
         self.integrator_accuracy = integrator_accuracy
         self.model = opensim.Model(model_path)
         self.model.initSystem()
@@ -281,8 +281,9 @@ class OsimEnv(gym.Env):
     prev_state_desc = None
 #    bins = np.linspace(0, 1, 11)
     ids_remove = [35, 36, 38, 39, 39, 40, 41, 42, 43, 53, 54, 55, 56, 57, 58,
-                  59, 60, 61, 91, 94, 97, 100, 103, 106, 109, 112, 115, 118,
-                  121, 124, 127, 130, 133, 136, 139, 142, 145]
+                  59, 60, 61]
+    fiber_velocities = [97, 100, 103, 106, 109, 112, 115, 118, 121, 124, 127,
+                        130, 133, 136, 139, 142, 145, 148, 151]
 
     model_path = None # os.path.join(os.path.dirname(__file__), '../models/MODEL_NAME.osim')
 
@@ -297,7 +298,7 @@ class OsimEnv(gym.Env):
     def is_done(self):
         return False
 
-    def __init__(self, visualize = True, integrator_accuracy=3e-2):
+    def __init__(self, visualize = True, integrator_accuracy = 5e-5):
         self.visualize = visualize
         self.integrator_accuracy = integrator_accuracy
         self.load_model()
@@ -336,6 +337,12 @@ class OsimEnv(gym.Env):
     def get_action_space_size(self):
         return self.osim_model.get_action_space_size()
 
+    def squash_fiber_velocities(self, obs):
+        def squash_func(x):
+            return x / (1 + np.abs(x))
+        obs = [squash_func(obs[i]) for i in range(len(obs)) if i in self.fiber_velocities]
+        return obs
+
     def reset(self, project = True):
         self.osim_model.reset()
 
@@ -344,13 +351,11 @@ class OsimEnv(gym.Env):
         else:
             obs = self.get_state_desc()
 
-#        obs = [obs[i] for i in range(len(obs)) if i not in self.ids_remove]
+        obs = self.squash_fiber_velocities(obs)
 
         return obs
 
     def step(self, action, project = True):
-#        action = np.clip(action, 0, 1)
-#        action = np.digitize(action, self.bins, right=True) / 10
         action = [i/10 for i in action]  # for discretized actions
 
         self.prev_state_desc = self.get_state_desc()
@@ -362,7 +367,7 @@ class OsimEnv(gym.Env):
         else:
             obs = self.get_state_desc()
 
-#        obs = [obs[i] for i in range(len(obs)) if i not in self.ids_remove]
+        obs = self.squash_fiber_velocities(obs)
 
         return [obs, self.reward(), self.is_done() or (self.osim_model.istep >= self.spec.timestep_limit), {} ]
 
@@ -420,7 +425,7 @@ class ProstheticsEnv(OsimEnv):
 
     time_limit = 300
 
-    def __init__(self, visualize = True, integrator_accuracy=3e-2):
+    def __init__(self, visualize = True, integrator_accuracy = 5e-5):
         self.model_paths = {}
         self.model_paths["3D_pros"] = os.path.join(os.path.dirname(__file__), '../models/gait14dof22musc_pros_20180507.osim')
         self.model_paths["3D"] = os.path.join(os.path.dirname(__file__), '../models/gait14dof22musc_20170320.osim')

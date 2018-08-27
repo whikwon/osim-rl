@@ -524,7 +524,7 @@ class ProstheticsEnv(OsimEnv):
 
         # reward and penalty according to the pelvis position
         penalty += abs(state_desc['body_pos']['pelvis'][2])
-        reward += abs(state_desc['body_pos']['pelvis'][0])
+        reward += state_desc['body_pos']['pelvis'][0]
 
         if state_desc["body_pos"]["pelvis"][1] < 0.6:
             penalty += 30

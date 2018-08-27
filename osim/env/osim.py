@@ -16,6 +16,21 @@ import random
 # - read the high level description of the state
 # The objective, stop condition, and other gym-related
 # methods are enclosed in the OsimEnv class
+
+
+def flatten(d):
+    res = []  # Result list
+    if isinstance(d, dict):
+        for key, val in sorted(d.items()):
+            res.extend(flatten(val))
+    elif isinstance(d, list):
+        res = d
+    else:
+        res = [d]
+
+    return res
+
+
 class OsimModel(object):
     # Initialize simulation
     stepsize = 0.01
@@ -337,25 +352,22 @@ class OsimEnv(gym.Env):
     def get_action_space_size(self):
         return self.osim_model.get_action_space_size()
 
-    def squash_fiber_velocities(self, obs):
-        def squash_func(x):
-            return x / (1 + np.abs(x))
-        obs = [squash_func(obs[i]) if i in self.fiber_velocities else obs[i] for i in range(len(obs))]
-        return obs
+    def squash_obs(self, obs):
+        return np.array(obs) / (1 + np.abs(obs))
 
-    def reset(self, project = True):
+    def reset(self, project = False):
         self.osim_model.reset()
 
         if project:
             obs = self.get_observation()
         else:
-            obs = self.get_state_desc()
+            obs = flatten(self.get_state_desc())
 
-        obs = self.squash_fiber_velocities(obs)
+        obs = self.squash_obs(obs)
 
         return obs
 
-    def step(self, action, project = True):
+    def step(self, action, project = False):
         action = [i/10 for i in action]  # for discretized actions
 
         self.prev_state_desc = self.get_state_desc()
@@ -365,9 +377,9 @@ class OsimEnv(gym.Env):
         if project:
             obs = self.get_observation()
         else:
-            obs = self.get_state_desc()
+            obs = flatten(self.get_state_desc())
 
-        obs = self.squash_fiber_velocities(obs)
+        obs = self.squash_obs(obs)
 
         return [obs, self.reward(), self.is_done() or (self.osim_model.istep >= self.spec.timestep_limit), {} ]
 

@@ -37,7 +37,7 @@ class OsimModel(object):
     maxforces = []
     curforces = []
 
-    def __init__(self, model_path, visualize, integrator_accuracy = 3e-2):
+    def __init__(self, model_path, visualize, integrator_accuracy=3e-2):
         self.integrator_accuracy = integrator_accuracy
         self.model = opensim.Model(model_path)
         self.model.initSystem()
@@ -300,7 +300,7 @@ class OsimEnv(gym.Env):
     def is_done(self):
         return False
 
-    def __init__(self, visualize = True, integrator_accuracy = 3e-2):
+    def __init__(self, visualize = True, integrator_accuracy=3e-2):
         self.visualize = visualize
         self.integrator_accuracy = integrator_accuracy
         self.load_model()
@@ -414,6 +414,7 @@ class L2RunEnv(OsimEnv):
             return 0
         return state_desc["joint_pos"]["ground_pelvis"][1] - prev_state_desc["joint_pos"]["ground_pelvis"][1]
 
+
 class ProstheticsEnv(OsimEnv):
     prosthetic = True
     model = "3D"
@@ -422,7 +423,7 @@ class ProstheticsEnv(OsimEnv):
 
     time_limit = 300
 
-    def __init__(self, visualize = True, integrator_accuracy = 3e-2):
+    def __init__(self, visualize = True, integrator_accuracy=3e-2):
         self.model_paths = {}
         self.model_paths["3D_pros"] = os.path.join(os.path.dirname(__file__), '../models/gait14dof22musc_pros_20180507.osim')
         self.model_paths["3D"] = os.path.join(os.path.dirname(__file__), '../models/gait14dof22musc_20170320.osim')
@@ -509,16 +510,12 @@ class ProstheticsEnv(OsimEnv):
             penalty -= abs(state_desc['body_pos'][body_part][2])
 
         if state_desc["body_pos"]["pelvis"][1] < 0.6:
-            penalty -= 20
+            penalty -= 30
 
         reward += penalty
 
         if self.osim_model.istep == self.spec.timestep_limit:
-            reward += 40
-
-#        # penalty according to head and pelvis position
-#        if state_desc["body_pos"]["pelvis"][0] < state_desc["body_pos"]["head"][0]:
-#            reward -= 0.1
+            reward += 50
 
         return reward
 

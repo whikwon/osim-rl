@@ -340,7 +340,7 @@ class OsimEnv(gym.Env):
     def squash_fiber_velocities(self, obs):
         def squash_func(x):
             return x / (1 + np.abs(x))
-        obs = [squash_func(obs[i]) for i in range(len(obs)) if i in self.fiber_velocities]
+        obs = [squash_func(obs[i]) if i in self.fiber_velocities else obs[i] for i in range(len(obs))]
         return obs
 
     def reset(self, project = True):

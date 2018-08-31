@@ -469,8 +469,7 @@ class ProstheticsEnv(OsimEnv):
 
     def is_done(self):
         state_desc = self.get_state_desc()
-        early_stopping = self.cum_rewards < -100
-        return state_desc["body_pos"]["pelvis"][1] < 0.6 or early_stopping
+        return state_desc["body_pos"]["pelvis"][1] < 0.6
 
     ## Values in the observation vector
     # y, vx, vy, ax, ay, rz, vrz, arz of pelvis (8 values)
@@ -558,9 +557,8 @@ class ProstheticsEnv(OsimEnv):
         self.generate_new_targets()
         self.cum_rewards = 0
         obs = super(ProstheticsEnv, self).reset(project = project)
-        if self.osim_model.istep == 0:
-            self.init_obs_body = np.array(flatten(obs["body_pos"])[2::3])
-            self.pelvis_xpos = obs["body_pos"]["pelvis"][0]
+        self.init_obs_body = np.array(flatten(obs["body_pos"])[2::3])
+        self.pelvis_xpos = obs["body_pos"]["pelvis"][0]
 
         obs = flatten(obs)
         return obs
@@ -593,7 +591,6 @@ class ProstheticsEnv(OsimEnv):
             reward += 40
 
         reward -= penalty
-        self.cum_rewards += reward
 
         return reward
 

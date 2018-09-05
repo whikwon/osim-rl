@@ -558,7 +558,6 @@ class ProstheticsEnv(OsimEnv):
         self.cum_rewards = 0
         obs = super(ProstheticsEnv, self).reset(project = project)
         self.init_obs_body = np.array(flatten(obs["body_pos"])[2::3])
-        self.pelvis_xpos = obs["body_pos"]["pelvis"][0]
 
         obs = flatten(obs)
         return obs
@@ -579,16 +578,14 @@ class ProstheticsEnv(OsimEnv):
 
         # reward and penalty according to the pelvis position
         penalty += np.sum(np.abs(np.array(flatten(state_desc["body_pos"])[2::3]) - self.init_obs_body))
-        if self.osim_model.istep % 3 == 0:
-            if self.pelvis_xpos > state_desc['body_pos']['pelvis'][0]:
-                reward -= 1
-            self.pelvis_xpos = state_desc['body_pos']['pelvis'][0]
+        if state_desc["body_pos"]["toes_l"] < 0.05:
+            reward += 1
 
         if state_desc["body_pos"]["pelvis"][1] < 0.6:
-            penalty += 20
+            penalty += 10
 
         if self.osim_model.istep == self.spec.timestep_limit:
-            reward += 40
+            reward += 20
 
         reward -= penalty
 

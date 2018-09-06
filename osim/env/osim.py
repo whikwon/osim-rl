@@ -582,7 +582,7 @@ class ProstheticsEnv(OsimEnv):
 
         if state_desc["body_pos"]["pelvis"][0] > self.pelvis_pos:
             reward += 1
-            self.pelvis_pos = state_desc["body_pos"]["pelvis"]
+            self.pelvis_pos = state_desc["body_pos"]["pelvis"][0]
 
         if state_desc["body_pos"]["toes_l"][1] < 0.1:
             reward += 1

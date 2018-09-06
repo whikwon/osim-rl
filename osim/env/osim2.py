@@ -18,7 +18,7 @@ import random
 # The objective, stop condition, and other gym-related
 # methods are enclosed in the OsimEnv class
 
-mot = pd.read_csv('opensim_simulator', sep='\t')
+mot = pd.read_csv('opensim_simulator.txt', sep='\t')
 mot[['pelvis_tx', 'L.Toe.Tip_tx', 'R.Toe.Tip_tx', 'Top.Head_tx']] = \
     mot[['pelvis_tx', 'L.Toe.Tip_tx', 'R.Toe.Tip_tx',
          'Top.Head_tx']].apply(lambda x: x + 0.0658878*x.index)

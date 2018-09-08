@@ -324,7 +324,6 @@ class OsimEnv(gym.Env):
         # Create specs, action and observation spaces mocks for compatibility with OpenAI gym
         self.spec = Spec()
         self.spec.timestep_limit = self.time_limit
-        self.spec.max_episode_steps = self.time_limit
 
         self.action_space = ( [0.0] * self.osim_model.get_action_space_size(), [1.0] * self.osim_model.get_action_space_size() )
 #        self.observation_space = ( [-math.pi*100] * self.get_observation_space_size(), [math.pi*100] * self.get_observation_space_s
@@ -448,6 +447,7 @@ class ProstheticsEnv(OsimEnv):
         if difficulty == 1:
             self.time_limit = 1000
         self.spec.timestep_limit = self.time_limit
+        self.spec.max_episode_steps = self.time_limit
 
     def __init__(self, visualize = True, integrator_accuracy = 5e-5, difficulty=0, seed=0):
         self.model_paths = {}

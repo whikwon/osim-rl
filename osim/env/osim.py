@@ -580,7 +580,7 @@ class ProstheticsEnv(OsimEnv):
 #        # reward and penalty according to the pelvis position
 #        penalty += np.sum(np.abs(np.array(flatten(state_desc["body_pos"])[2::3]) - self.init_obs_body))
 
-        if state_desc["body_vel"]["pelvis"][0] > 0
+        if state_desc["body_vel"]["pelvis"][0] > 0:
             reward += 2
 
         if state_desc["body_pos"]["toes_l"][1] and state_desc["body_pos"]["pros_foot_r"]< 0.4:

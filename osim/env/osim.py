@@ -572,7 +572,7 @@ class ProstheticsEnv(OsimEnv):
         reward = 9.0 - (state_desc["body_vel"]["pelvis"][0] - 3.0)**2
 
         if self.osim_model.istep < 50:
-            reward *= 2
+            reward *= (100 - self.osim_model.istep) / 50
 
         # custom reward shaping
         penalty = 0
@@ -584,11 +584,11 @@ class ProstheticsEnv(OsimEnv):
 #        # reward and penalty according to the pelvis position
 #        penalty += np.sum(np.abs(np.array(flatten(state_desc["body_pos"])[2::3]) - self.init_obs_body))
 
-#        if state_desc["body_vel"]["pelvis"][0] > 0:
-#            reward += 1
+        if state_desc["body_vel"]["pelvis"][0] > 0:
+            reward += 1
 #
-#        if state_desc["body_pos"]["toes_l"][1] < 0.4 and state_desc["body_pos"]["pros_foot_r"][1]< 0.4:
-#            reward += 0.5
+        if state_desc["body_pos"]["toes_l"][1] < 0.4 and state_desc["body_pos"]["pros_foot_r"][1]< 0.4:
+            reward += 0.5
 #
 #        if state_desc["body_pos"]["pelvis"][1] < 0.6:
 #            penalty += 20

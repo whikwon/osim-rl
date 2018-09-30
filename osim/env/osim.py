@@ -571,8 +571,8 @@ class ProstheticsEnv(OsimEnv):
 
         reward = 9.0 - (state_desc["body_vel"]["pelvis"][0] - 3.0)**2
 
-        if self.osim_model.istep < 50:
-            reward *= (100 - self.osim_model.istep) / 50
+#        if self.osim_model.istep < 50:
+#            reward *= (100 - self.osim_model.istep) / 50
 
         # custom reward shaping
 #        penalty = 0

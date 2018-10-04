@@ -364,7 +364,7 @@ class OsimEnv(gym.Env):
         return obs
 
     def step(self, action, project = False):
-        action = [i/10 for i in action]  # for discretized actions
+#        action = [i/10 for i in action]  # for discretized actions
 
         self.prev_state_desc = self.get_state_desc()
         self.osim_model.actuate(action)

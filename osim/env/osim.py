@@ -438,7 +438,8 @@ def rect(row):
 class ProstheticsEnv(OsimEnv):
     prosthetic = True
     model = "3D"
-    demonstrate = pd.read_excel("../models/pros_obs169_181010.xlsx")
+    demonstrate = pd.read_excel(os.path.join(os.path.dirname(__file__),
+                                "../models/pros_obs169_181010.xlsx"))
 
     def get_model_key(self):
         return self.model + ("_pros" if self.prosthetic else "")

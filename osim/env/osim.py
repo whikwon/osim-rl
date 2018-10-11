@@ -2,7 +2,6 @@ import math
 import numpy as np
 import os
 from .utils.mygym import convert_to_gym
-from input_filter import *
 import gym
 import opensim
 import random

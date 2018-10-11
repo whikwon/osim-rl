@@ -579,21 +579,23 @@ class ProstheticsEnv(OsimEnv):
             return 0
 
         reward = 9.0 - (state_desc["body_vel"]["pelvis"][0] - 3.0)**2
+        penalty = 0
 
-        demo = self.demonstrate.iloc[self.osim_model.istep][1:].values
+        if self.osim_model.istep < 60:
+            demo = self.demonstrate.iloc[self.osim_model.istep][1:].values
 
-        pos_demo = demo_filter(demo, target='pos')
-        pos_target = target_filter(obs, target='pos')
-        vel_demo = demo_filter(demo, target='vel')
-        vel_target = target_filter(obs, target='vel')
-        acc_demo = demo_filter(demo, target='acc')
-        acc_target = target_filter(obs, target='acc')
+            pos_demo = demo_filter(demo, target='pos')
+            pos_target = target_filter(obs, target='pos')
+            vel_demo = demo_filter(demo, target='vel')
+            vel_target = target_filter(obs, target='vel')
+            acc_demo = demo_filter(demo, target='acc')
+            acc_target = target_filter(obs, target='acc')
 
-        pos_penalty = np.abs(np.sum(pos_demo - pos_target))
-        vel_penalty = np.abs(np.sum(vel_demo - vel_target))
-        acc_penalty = np.abs(np.sum(acc_demo - acc_target))
+            pos_penalty = np.abs(np.sum(pos_demo - pos_target))
+            vel_penalty = np.abs(np.sum(vel_demo - vel_target))
+            acc_penalty = np.abs(np.sum(acc_demo - acc_target))
 
-        penalty = 0.95 * pos_penalty + 0.01 * vel_penalty + 0.04 * acc_penalty
+            penalty = 0.95 * pos_penalty + 0.01 * vel_penalty + 0.04 * acc_penalty
 
 #        if self.osim_model.istep < 50:
 #            reward *= (100 - self.osim_model.istep) / 50

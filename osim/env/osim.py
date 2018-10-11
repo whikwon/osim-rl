@@ -2,9 +2,11 @@ import math
 import numpy as np
 import os
 from .utils.mygym import convert_to_gym
+from input_filter import *
 import gym
 import opensim
 import random
+import pandas as pd
 
 ## OpenSim interface
 # The amin purpose of this class is to provide wrap all
@@ -437,6 +439,8 @@ def rect(row):
 class ProstheticsEnv(OsimEnv):
     prosthetic = True
     model = "3D"
+    demonstrate = pd.read_excel("./pros_obs169_181010.xlsx")
+
     def get_model_key(self):
         return self.model + ("_pros" if self.prosthetic else "")
 
@@ -563,13 +567,33 @@ class ProstheticsEnv(OsimEnv):
         obs = flatten(obs)
         return obs
 
+    def l1_penalty(obs, target):
+        return np.sum(obs - target)
+
     def reward_round1(self):
         state_desc = self.get_state_desc()
+        obs = flatten(state_desc)
         prev_state_desc = self.get_prev_state_desc()
         if not prev_state_desc:
             return 0
 
         reward = 9.0 - (state_desc["body_vel"]["pelvis"][0] - 3.0)**2
+
+        demo = self.demonstrate.iloc[self.osim_model.istep][1:]
+        print(self.osim_model.istep)
+
+        pos_demo = demo_filter(demo, target='pos')
+        pos_target = target_filter(obs, target='pos')
+        vel_demo = demo_filter(demo, target='vel')
+        vel_target = target_filter(obs, target='vel')
+        acc_demo = demo_filter(demo, target='acc')
+        acc_target = target_filter(obs, target='acc')
+
+        pos_penalty = self.l1_penalty(pos_demo, pos_target)
+        vel_penalty = self.l1_penalty(vel_demo, vel_target)
+        acc_penalty = self.l1_penalty(acc_demo, acc_target)
+
+        penalty = 0.75 * pos_penalty + 0.15 * vel_penalty + 0.1 * acc_penalty
 
 #        if self.osim_model.istep < 50:
 #            reward *= (100 - self.osim_model.istep) / 50

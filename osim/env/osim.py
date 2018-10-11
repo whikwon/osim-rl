@@ -580,7 +580,7 @@ class ProstheticsEnv(OsimEnv):
 
         reward = 9.0 - (state_desc["body_vel"]["pelvis"][0] - 3.0)**2
 
-        demo = self.demonstrate.iloc[self.osim_model.istep][1:]
+        demo = self.demonstrate.iloc[self.osim_model.istep][1:].values
         print(self.osim_model.istep)
 
         pos_demo = demo_filter(demo, target='pos')

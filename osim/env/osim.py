@@ -639,14 +639,17 @@ class ProstheticsEnv(OsimEnv):
         penalty += (state_desc["body_vel"]["pelvis"][0] - state_desc["target_vel"][0])**2
         penalty += (state_desc["body_vel"]["pelvis"][2] - state_desc["target_vel"][2])**2
 
-        if state_desc["body_pos"]["pros_foot_r"][1] < 0.1:
+        if abs(state_desc["joint_pos"}["knee_r"])[0] > 0.1:
             penalty += 1
+
+        if 1 <  state_desc["body_vel"]["pros_foot_r"][1] < 1.5:
+            reward += 1.5
 
         if state_desc["body_pos"]["toes_l"][1] < 0.05:
             reward += 1
 
         # Reward for not falling
-        reward = 2
+#        reward = 2
         return reward - penalty
 
     def reward(self):

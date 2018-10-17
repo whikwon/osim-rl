@@ -629,6 +629,7 @@ class ProstheticsEnv(OsimEnv):
         state_desc = self.get_state_desc()
         prev_state_desc = self.get_prev_state_desc()
         penalty = 0
+        reward = 0
 
         # Small penalty for too much activation (cost of transport)
         penalty += np.sum(np.array(self.osim_model.get_activations())**2) * 0.001
@@ -638,9 +639,14 @@ class ProstheticsEnv(OsimEnv):
         penalty += (state_desc["body_vel"]["pelvis"][0] - state_desc["target_vel"][0])**2
         penalty += (state_desc["body_vel"]["pelvis"][2] - state_desc["target_vel"][2])**2
 
-        # Reward for not falling
-        reward = 10.0
+        if state_desc["body_pos"]["pros_foot_r"][1] < 0.1:
+            penalty += 1
 
+        if state_desc["body_pos"]["toes_l"][1] < 0.05:
+            reward += 1
+
+        # Reward for not falling
+        reward = 2
         return reward - penalty
 
     def reward(self):

@@ -658,7 +658,7 @@ class ProstheticsEnv(OsimEnv):
 
         # Reward for not falling
         reward = 1.5
-        return reward - penalty, [p1, p2, p3, p4]
+        return reward - penalty
 
     def reward(self):
         if self.difficulty == 0:

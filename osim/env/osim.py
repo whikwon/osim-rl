@@ -528,7 +528,7 @@ class ProstheticsEnv(OsimEnv):
 
     def get_observation_space_size(self):
         if self.prosthetic == True:
-            return 412
+            return 415
         return 167
 
     def generate_new_targets(self, poisson_lambda = 300):
@@ -632,25 +632,33 @@ class ProstheticsEnv(OsimEnv):
         reward = 0
 
         # Small penalty for too much activation (cost of transport)
-        penalty += np.sum(np.array(self.osim_model.get_activations())**2) * 0.001
+        p1 = np.sum(np.array(self.osim_model.get_activations())**2) * 0.001
 
         # Big penalty for not matching the vector on the X,Z projection.
         # No penalty for the vertical axis
-        penalty += (state_desc["body_vel"]["pelvis"][0] - state_desc["target_vel"][0])**2
-        penalty += (state_desc["body_vel"]["pelvis"][2] - state_desc["target_vel"][2])**2
+        p2 = np.abs(state_desc["body_vel"]["pelvis"][0] -
+                state_desc["target_vel"][0])
+        p3 = np.exp((state_desc["body_vel"]["pelvis"][2] -
+            state_desc["target_vel"][2])**2)
 
-        if abs(state_desc["joint_pos"}["knee_r"])[0] > 0.1:
-            penalty += 1
+        p4 = np.abs(state_desc["body_pos"]["toes_l"][1]) if state_desc['body_pos']['toes_l'][1] > 0.1 else 0
+        penalty += p1
+        penalty += p2
+        penalty += p3
+        penalty += p4
 
-        if 1 <  state_desc["body_vel"]["pros_foot_r"][1] < 1.5:
-            reward += 1.5
-
-        if state_desc["body_pos"]["toes_l"][1] < 0.05:
-            reward += 1
+#        if abs(state_desc["joint_pos"}["knee_r"])[0] > 0.1:
+#            penalty += 1
+#
+#        if 1 <  state_desc["body_vel"]["pros_foot_r"][1] < 1.5:
+#            reward += 1.5
+#
+#        if state_desc["body_pos"]["toes_l"][1] < 0.05:
+#            reward += 1
 
         # Reward for not falling
-#        reward = 2
-        return reward - penalty
+        reward = 1.5
+        return reward - penalty, [p1, p2, p3, p4]
 
     def reward(self):
         if self.difficulty == 0:

@@ -636,8 +636,8 @@ class ProstheticsEnv(OsimEnv):
 
         # Big penalty for not matching the vector on the X,Z projection.
         # No penalty for the vertical axis
-        r1 = state_desc['body_vel']['pelvis'][0] - (state_desc['body_vel']['pelvis'] - state_desc['target_vel'][0])**2
-        r2 = state_desc['body_vel']['pelvis'][2] - (state_desc['body_vel']['pelvis'] - state_desc['target_vel'][2])**2
+        r1 = state_desc['target_vel'][0] - (state_desc['body_vel']['pelvis'][0] - state_desc['target_vel'][0])**2
+        r2 = state_desc['target_vel'][2] - (state_desc['body_vel']['pelvis'][2] - state_desc['target_vel'][2])**2
         r3 = -np.abs(state_desc["body_pos"]["toes_l"][1]) if state_desc['body_pos']['toes_l'][1] > 0.1 else 0.5
         r4 = -np.abs(state_desc["body_pos"]["pros_foot_r"][1]) if state_desc['body_pos']['pros_foot_r'][1] > 0.5 else 0.5
 

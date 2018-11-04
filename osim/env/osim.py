@@ -636,16 +636,17 @@ class ProstheticsEnv(OsimEnv):
 
         # Big penalty for not matching the vector on the X,Z projection.
         # No penalty for the vertical axis
-        p2 = np.abs(state_desc["body_vel"]["pelvis"][0] -
-                state_desc["target_vel"][0])
-        p3 = np.exp((state_desc["body_vel"]["pelvis"][2] -
-            state_desc["target_vel"][2])**2)
+        r1 = state_desc['body_vel']['pelvis'][0] - (state_desc['body_vel']['pelvis'] - state_desc['target_vel'][0])**2
+        r2 = state_desc['body_vel']['pelvis'][2] - (state_desc['body_vel']['pelvis'] - state_desc['target_vel'][2])**2
+        r3 = -np.abs(state_desc["body_pos"]["toes_l"][1]) if state_desc['body_pos']['toes_l'][1] > 0.1 else 0.5
+        r4 = -np.abs(state_desc["body_pos"]["pros_foot_r"][1]) if state_desc['body_pos']['pros_foot_r'][1] > 0.5 else 0.5
 
-        p4 = np.abs(state_desc["body_pos"]["toes_l"][1]) if state_desc['body_pos']['toes_l'][1] > 0.1 else 0
+        reward += r1
+        reward += r2
+        reward += r3
+        reward += r4
+
         penalty += p1
-        penalty += p2
-        penalty += p3
-        penalty += p4
 
 #        if abs(state_desc["joint_pos"}["knee_r"])[0] > 0.1:
 #            penalty += 1
@@ -657,7 +658,6 @@ class ProstheticsEnv(OsimEnv):
 #            reward += 1
 
         # Reward for not falling
-        reward = 1.5
         return reward - penalty
 
     def reward(self):
